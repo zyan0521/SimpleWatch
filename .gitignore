@@ -1,0 +1,13 @@
+#ignore configrue files
+.idea/
+.vscode/
+
+#ignore building files
+DebugConfig/
+Listing/
+Objects/
+
+#ignore keilIDE files
+*.uvguix.*
+*.uvoptx
+*.uvprojx
