@@ -730,6 +730,16 @@
               <FileType>5</FileType>
               <FilePath>.\Software\Menu.h</FilePath>
             </File>
+            <File>
+              <FileName>SetTime.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Software\SetTime.c</FilePath>
+            </File>
+            <File>
+              <FileName>SetTime.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Software\SetTime.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

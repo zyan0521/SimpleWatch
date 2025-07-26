@@ -6,7 +6,7 @@
 #define KEY_2		GPIO_Pin_2
 #define KEY_3		GPIO_Pin_0
 
-uint8_t KeyNum = 0;
+uint8_t Key_Num = 0;
 
 void Key_Init(void)
 {
@@ -40,17 +40,17 @@ void Key_Tick(void){
 	PreState = CurState;
 	CurState = Key_GetState();
 	if (PreState != 0 && CurState == 0){
-		KeyNum = PreState;
+		Key_Num = PreState;
 	}
 }
 
 uint8_t Key_GetNum(void)
 {
 	uint8_t Temp;
-	if(KeyNum)
+	if(Key_Num)
 	{
-		Temp=KeyNum;
-		KeyNum=0;
+		Temp=Key_Num;
+		Key_Num=0;
 		return Temp;
 	}
 	else

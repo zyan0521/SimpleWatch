@@ -3,6 +3,6 @@
 
 void MenuAPB_Init(void);
 uint8_t Get_MenuPage(void);
-void Menu_ShowUI(void);
-//void MenuReverse(uint8_t MenuPageSele);
+uint8_t SettingPage(void);
+
 #endif

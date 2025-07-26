@@ -2,8 +2,15 @@
 #include "MyRTC.h"
 #include "OLED.h"
 #include "Key.h"
+#include "SetTime.h"
+
+#define SettingPageItemNum		2
+
 
 uint8_t MenuPageSele = 0;	//select menu or setting
+uint8_t SettingPageSele = 1;
+uint8_t SettingPageSele_Temp;
+uint8_t KeyNum;	//it is different form Key_Num in Key.c
 
 
 void MenuAPB_Init(void)
@@ -29,7 +36,6 @@ void Menu_ShowUI(void)
 
 // slecect page
 uint8_t Get_MenuPage(void) {
-	uint8_t KeyNum;
 	while(1) {
         KeyNum = Key_GetNum();
         if(KeyNum == 1) {
@@ -41,7 +47,7 @@ uint8_t Get_MenuPage(void) {
         else if(KeyNum == 3) {
             OLED_Clear();
             OLED_Update();
-            break;
+            return MenuPageSele;
         }
 		
 		switch(MenuPageSele) {
@@ -58,6 +64,54 @@ uint8_t Get_MenuPage(void) {
 				break;
 		}
     }
-    return MenuPageSele;
 }
 
+/*-----------show the setting UI------------*/
+
+void Setting_ShowUI(void){
+	OLED_ShowString(48,0,"设置",OLED_8X16);
+	OLED_ShowImage(0,0,16,16,Return);
+	OLED_ShowString(0,32,"日期时间        ",OLED_8X16);
+	//OLED_Update();
+}
+
+uint8_t SettingPage(void) {
+	while(1) {
+        KeyNum = Key_GetNum();
+        if(KeyNum == 1) {
+            SettingPageSele--;
+			if(SettingPageSele < 1){
+				SettingPageSele = SettingPageItemNum;
+			}
+        }
+        else if(KeyNum == 2) {
+            SettingPageSele++;
+			if(SettingPageSele > SettingPageItemNum){
+				SettingPageSele = 1;
+			}
+        }
+        else if(KeyNum == 3) {
+            OLED_Clear();
+            OLED_Update();
+            SettingPageSele_Temp = SettingPageSele;
+			if(SettingPageSele_Temp == 1)	return 0;
+			else if(SettingPageSele_Temp == 2){SetTimePage();}	//enter the time setup page	
+        }
+		
+		switch(SettingPageSele) {
+			case 1:
+				Setting_ShowUI();
+				OLED_ReverseArea(0,0,16,16);
+				OLED_Update();
+				break;
+			
+			case 2:
+				Setting_ShowUI();
+				OLED_ReverseArea(0,32,128,16);
+				OLED_Update();
+				break;
+			//...
+			//case SettingPageItemNum:
+		}
+    }
+}

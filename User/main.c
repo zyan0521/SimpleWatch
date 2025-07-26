@@ -5,13 +5,14 @@
 #include "Key.h"
 #include "Timer.h"
 
+//NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);	//write in Timer.c
+
 //the number of current page
 uint8_t PageNum;
 
 int main(void)
 {
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
-	/*OLED初始化*/
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);		
 	OLED_Init();
 	OLED_Clear();
 	Timer_Init();
@@ -27,7 +28,7 @@ int main(void)
 		}
 		else if(PageNum == 2)
 		{
-			
+			SettingPage();
 		}
 	}
 }
