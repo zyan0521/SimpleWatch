@@ -1,13 +1,54 @@
-#ignore configrue files
-.idea/
-.vscode/
-
-#ignore building files
-DebugConfig/
-Listing/
-Objects/
-
-#ignore keilIDE files
-*.uvguix.*
+# Keil project generated files
 *.uvoptx
-*.uvprojx
+*.uvgui.*
+*.bak
+*.dep
+*.lnp
+*.lst
+*.map
+*.crf
+*.d
+*.iex
+*.o
+*.obj
+*.plg
+*.htm
+*.tra
+*.log
+*.tmp
+
+# Output files
+*.axf
+*.elf
+*.bin
+*.hex
+
+# Build folders
+/Debug/
+\Debug\
+/Release/
+\Release\
+/Objects/
+\Objects\
+/Listings/
+\Listings\
+
+# Keil generated configuration folders
+/Output/
+\Output\
+
+# IDE or OS specific files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.sdf
+*.suo
+*.user
+*.aps
+*.ncb
+*.opensdf
+
+# Git itself
+.gitignore
