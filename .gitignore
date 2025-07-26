@@ -24,18 +24,18 @@
 *.hex
 
 # Build folders
-/Debug/
-\Debug\
-/Release/
-\Release\
-/Objects/
-\Objects\
-/Listings/
-\Listings\
+/project/Debug/
+\Project\Debug\
+/project/Release/
+\Project\Release\
+/project/Objects/
+\Project\Objects\
+/project/Listings/
+\Project\Listings\
 
 # Keil generated configuration folders
-/Output/
-\Output\
+/project/Output/
+\Project\Output\
 
 # IDE or OS specific files
 .DS_Store
