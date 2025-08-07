@@ -1,7 +1,7 @@
 #include "stm32f10x.h"                  // Device header
 #include <time.h>
 
-uint16_t MyRTC_Time[] = {2023, 1, 1, 23, 59, 55};
+int MyRTC_Time[] = {2023, 1, 1, 23, 59, 55};
 
 void MyRTC_SetTime(void);
 

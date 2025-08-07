@@ -77,6 +77,7 @@ void Setting_ShowUI(void){
 
 uint8_t SettingPage(void) {
 	while(1) {
+		
         KeyNum = Key_GetNum();
         if(KeyNum == 1) {
             SettingPageSele--;
@@ -94,8 +95,9 @@ uint8_t SettingPage(void) {
             OLED_Clear();
             OLED_Update();
             SettingPageSele_Temp = SettingPageSele;
-			if(SettingPageSele_Temp == 1)	return 0;
-			else if(SettingPageSele_Temp == 2){SetTimePage();}	//enter the time setup page	
+
+		if(SettingPageSele_Temp == 1)	return 0;	//return last level page
+		else if(SettingPageSele_Temp == 2){SetTimePage();}	//enter the time setup page	
         }
 		
 		switch(SettingPageSele) {
