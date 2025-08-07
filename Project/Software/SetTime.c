@@ -26,7 +26,7 @@ static void SetTimeSec_ShowUI(void)
 	OLED_Printf(0, 32, OLED_8X16, "秒:%02d", MyRTC_Time[5]);
 }
 
-void Change_RTCTime(uint8_t RTC_Index,uint8_t flag)
+static void Change_RTCTime(uint8_t RTC_Index,uint8_t flag)
 {
 	if(flag == 1)
 	{
@@ -39,7 +39,7 @@ void Change_RTCTime(uint8_t RTC_Index,uint8_t flag)
 	MyRTC_SetTime();
 }
 
-uint8_t SetYear(void){
+static uint8_t SetYear(void){
 	while(1){
 		KeyNum = Key_GetNum();
 		if(KeyNum == 1){
@@ -57,7 +57,7 @@ uint8_t SetYear(void){
 	}
 }
 
-uint8_t SetMonth(void){
+static uint8_t SetMonth(void){
 	while(1){
 		KeyNum = Key_GetNum();
 		if(KeyNum == 1){
@@ -79,7 +79,7 @@ uint8_t SetMonth(void){
 	}
 }
 
-uint8_t SetDay(void){
+static uint8_t SetDay(void){
 	while(1){
 		KeyNum = Key_GetNum();
 		if(KeyNum == 1){
@@ -101,7 +101,7 @@ uint8_t SetDay(void){
 	}
 }
 
-uint8_t SetHour(void){
+static uint8_t SetHour(void){
 	while(1){
 		KeyNum = Key_GetNum();
 		if(KeyNum == 1){
@@ -123,7 +123,7 @@ uint8_t SetHour(void){
 	}
 }
 
-uint8_t SetMinute(void){
+static uint8_t SetMinute(void){
 	while(1){
 		KeyNum = Key_GetNum();
 		if(KeyNum == 1){
@@ -145,7 +145,7 @@ uint8_t SetMinute(void){
 	}
 }
 
-uint8_t SetSecond(void){
+static uint8_t SetSecond(void){
 	while(1){
 		KeyNum = Key_GetNum();
 		if(KeyNum == 1){
