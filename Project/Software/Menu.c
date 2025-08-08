@@ -4,12 +4,7 @@
 #include "Key.h"
 #include "SetTime.h"
 
-#define SettingPageItemNum		2
 
-
-uint8_t MenuPageSele = 0;	//select menu or setting
-uint8_t SettingPageSele = 1;
-uint8_t SettingPageSele_Temp;
 uint8_t KeyNum;	//it is different form Key_Num in Key.c
 
 
@@ -20,6 +15,7 @@ void MenuAPB_Init(void)
 }
 
 /*-----------show the memu UI------------*/
+uint8_t MenuPageSele = 0;	//select menu or setting
 
 void Menu_ShowUI(void)
 {
@@ -68,6 +64,11 @@ uint8_t Get_MenuPage(void) {
 
 /*-----------show the setting UI------------*/
 
+#define		SettingPageItemNum						2
+
+uint8_t SettingPageSele = 1;
+uint8_t SettingPageSele_Temp;
+
 void Setting_ShowUI(void){
 	OLED_ShowString(48,0,"设置",OLED_8X16);
 	OLED_ShowImage(0,0,16,16,Return);
@@ -115,5 +116,116 @@ uint8_t SettingPage(void) {
 			//...
 			//case SettingPageItemNum:
 		}
+    }
+}
+
+/*---------------------------------show the slide menu UI---------------------------------------*/
+
+/*设置滑动菜单界面选择项*/
+#define		SlideMenuPageItemNum						7
+
+/*滑动菜单界面选择项变量*/
+uint8_t SlideMenuPageSele = 1;
+uint8_t SlideMenuPageSele_Temp;
+
+uint8_t PreSelection;
+uint8_t TargetSelection;
+uint8_t x_Pre =48;
+uint8_t speed = 4;
+uint8_t MoveFlag;	//开始移动标志位，0:停止，1:开始
+
+/*滑动菜单界面显示UI*/
+static void SlideMenu_ShowUI(void) {
+	OLED_Clear();
+	OLED_ShowImage(42,10,44,44,Frame);
+	if (PreSelection < TargetSelection){
+		x_Pre -= speed;
+		if(x_Pre == 0){
+			PreSelection++;
+			MoveFlag = 0;
+			x_Pre = 48;
+		}
+	}
+	if (PreSelection > TargetSelection){
+		x_Pre += speed;
+		if(x_Pre == 96){
+			PreSelection--;
+			MoveFlag = 0;
+			x_Pre = 48;
+		}
+	}
+	if (PreSelection > 1){
+		OLED_ShowImage(x_Pre - 96,16,32,32,Menu_Graph[PreSelection - 2]);
+	}
+	if (PreSelection > 0){
+		OLED_ShowImage(x_Pre - 48,16,32,32,Menu_Graph[PreSelection - 1]);
+	}	
+	OLED_ShowImage(x_Pre,16,32,32, Menu_Graph[PreSelection]);
+	OLED_ShowImage(x_Pre + 48,16,32,32,Menu_Graph[PreSelection + 1]);
+	OLED_ShowImage(x_Pre + 96,16,32,32,Menu_Graph[PreSelection + 2]);
+	OLED_Update();
+}
+
+/*设定当前选中项和目标选中项,当前选中值大于目标选中值时左移，当前选中值小于目标选中值时右移*/
+static void Set_SlideMenuSelection(uint8_t MoveFlag, uint8_t preSelection,uint8_t targetSelection) {
+	if (MoveFlag == 1){
+		PreSelection = preSelection;
+		TargetSelection = targetSelection;
+		SlideMenu_ShowUI();
+	}
+}
+
+/*滑动菜单界面选择项*/
+uint8_t SlideMenuPage(void) {
+	MoveFlag = 1;
+	uint8_t MoveDerection = 1; // 0 左移，1 右移
+	while(1) {		
+        KeyNum = Key_GetNum();
+        if(KeyNum == 1) {
+			MoveDerection = 0 ;
+			MoveFlag = 1;
+            SlideMenuPageSele--;
+			if(SlideMenuPageSele < 1){
+				SlideMenuPageSele = SlideMenuPageItemNum;
+			}
+        }
+        else if(KeyNum == 2) {
+			MoveDerection = 1;
+			MoveFlag = 1;
+            SlideMenuPageSele++;
+			if(SlideMenuPageSele > SlideMenuPageItemNum){
+				SlideMenuPageSele = 1;
+			}
+        }
+        else if(KeyNum == 3) {
+            OLED_Clear();
+            OLED_Update();
+            SlideMenuPageSele_Temp = SlideMenuPageSele;
+
+			if(SlideMenuPageSele_Temp == 1)	return 0;	//return last level page
+			else if(SlideMenuPageSele_Temp == 2){}	//enter the time setup page	
+			else if(SlideMenuPageSele_Temp == 3){}	//enter the time setup page
+			else if(SlideMenuPageSele_Temp == 4){}	//enter the	 time setup page
+			else if(SlideMenuPageSele_Temp == 5){}	
+			else if(SlideMenuPageSele_Temp == 6){}	
+			else if(SlideMenuPageSele_Temp == SlideMenuPageItemNum){}	
+        }
+		
+		if (SlideMenuPageSele == 1) {
+			if (MoveDerection == 0){
+				Set_SlideMenuSelection(MoveFlag, 1, 0);
+			}
+			else {
+				Set_SlideMenuSelection(MoveFlag, 0, 0);
+			}
+		}
+		else {
+			if (MoveDerection == 0){
+				Set_SlideMenuSelection(MoveFlag, SlideMenuPageSele , SlideMenuPageSele - 1);
+			}
+			if (MoveDerection == 1){
+				Set_SlideMenuSelection(MoveFlag, SlideMenuPageSele - 2 , SlideMenuPageSele - 1);
+			}
+		}	
     }
 }
