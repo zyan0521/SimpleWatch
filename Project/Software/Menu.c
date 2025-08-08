@@ -16,6 +16,7 @@ void MenuAPB_Init(void)
 
 /*-----------show the memu UI------------*/
 uint8_t MenuPageSele = 0;	//select menu or setting
+uint8_t MenuPageSele = 0;	//select menu or setting
 
 void Menu_ShowUI(void)
 {
@@ -63,6 +64,11 @@ uint8_t Get_MenuPage(void) {
 }
 
 /*-----------show the setting UI------------*/
+
+#define		SettingPageItemNum						2
+
+uint8_t SettingPageSele = 1;
+uint8_t SettingPageSele_Temp;
 
 #define		SettingPageItemNum						2
 
