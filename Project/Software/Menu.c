@@ -219,11 +219,19 @@ uint8_t SlideMenuPage(void) {
 				Set_SlideMenuSelection(MoveFlag, 0, 0);
 			}
 		}
+		else if (SlideMenuPageSele == SlideMenuPageItemNum) {
+			if (MoveDerection == 0){
+				Set_SlideMenuSelection(MoveFlag, SlideMenuPageItemNum - 1, SlideMenuPageItemNum - 1);
+			}
+			else {
+				Set_SlideMenuSelection(MoveFlag, SlideMenuPageItemNum - 2, SlideMenuPageItemNum - 1);
+			}
+		}
 		else {
 			if (MoveDerection == 0){
 				Set_SlideMenuSelection(MoveFlag, SlideMenuPageSele , SlideMenuPageSele - 1);
 			}
-			if (MoveDerection == 1){
+			else {
 				Set_SlideMenuSelection(MoveFlag, SlideMenuPageSele - 2 , SlideMenuPageSele - 1);
 			}
 		}	
