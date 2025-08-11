@@ -24,7 +24,7 @@ int main(void)
 		PageNum = Get_MenuPage();
 		if(PageNum == 1)
 		{
-		
+			SlideMenuPage();
 		}
 		else if(PageNum == 2)
 		{
