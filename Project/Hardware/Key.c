@@ -1,3 +1,13 @@
+/*
+ * @Author: Jack 202205710405@smail.xtu.edu.cn
+ * @Date: 2025-07-24 18:02:23
+ * @LastEditors: Jack 202205710405@smail.xtu.edu.cn
+ * @LastEditTime: 2025-08-11 17:17:07
+ * @FilePath: \Project\hardware\Key.c
+ * @Description: 
+ * 
+ * Copyright (c) 2025 by ${git_name_email}, All Rights Reserved. 
+ */
 #include "stm32f10x.h"                  // Device header
 #include "Delay.h"
 
@@ -36,11 +46,15 @@ static uint8_t Key_GetState(void)
 }
 
 void Key_Tick(void){
+	static uint8_t Key_Tick_Cnt = 0;
 	static uint8_t PreState = 0,CurState = 0;
-	PreState = CurState;
-	CurState = Key_GetState();
-	if (PreState != 0 && CurState == 0){
-		Key_Num = PreState;
+	Key_Tick_Cnt++;
+	if(Key_Tick_Cnt >= 2){
+		PreState = CurState;
+		CurState = Key_GetState();
+		if (PreState != 0 && CurState == 0){
+			Key_Num = PreState;
+		}
 	}
 }
 
