@@ -1,7 +1,18 @@
+/*
+ * @Author: Jack 202205710405@smail.xtu.edu.cn
+ * @Date: 2025-07-24 18:02:23
+ * @LastEditors: Jack 202205710405@smail.xtu.edu.cn
+ * @LastEditTime: 2025-08-11 18:44:51
+ * @FilePath: \Project\Software\Menu.c
+ * @Description: 
+ * 
+ * Copyright (c) 2025 by ${git_name_email}, All Rights Reserved. 
+ */
 #include "stm32f10x.h"                  // Device header
 #include "MyRTC.h"
 #include "OLED.h"
 #include "Key.h"
+#include "LED.h"
 #include "SetTime.h"
 #include "Menu.h"
 
@@ -13,6 +24,7 @@ void MenuAPB_Init(void)
 {
 	MyRTC_Init();
 	Key_Init();
+	LED_Init();
 }
 
 /*-----------show the memu UI------------*/
@@ -205,7 +217,7 @@ uint8_t SlideMenuPage(void) {
 
 			if(SlideMenuPageSele_Temp == 1)	return 0;	//return last level page
 			else if(SlideMenuPageSele_Temp == 2){StopWatchPage();}	//enter the time setup page	
-			else if(SlideMenuPageSele_Temp == 3){}	//enter the time setup page
+			else if(SlideMenuPageSele_Temp == 3){FlashlightPage();}	//enter the time setup page
 			else if(SlideMenuPageSele_Temp == 4){}	//enter the	 time setup page
 			else if(SlideMenuPageSele_Temp == 5){}	
 			else if(SlideMenuPageSele_Temp == 6){}	
@@ -330,6 +342,61 @@ uint8_t StopWatchPage(void){
 
 			//...
 			//case StopWatchPageItemNum:
+		}
+    }
+}
+
+/*----------------------------------Flashlight Page---------------------------------------*/
+
+void Show_Flashlight_UI(void){
+	OLED_ShowImage(0,0,16,16,Return);
+	OLED_ShowString(40, 0, "手电筒", OLED_8X16);
+	OLED_ShowString(20,28,"ON",OLED_12X24);
+	OLED_ShowString(72,28,"OFF",OLED_12X24);
+}
+
+uint8_t FlashlightPageSele = 1;
+uint8_t FlashlightPageSele_Temp;
+uint8_t FlashlightPage(void){
+	while(1) {
+        KeyNum = Key_GetNum();
+        if(KeyNum == 1) {
+            FlashlightPageSele--;
+			if(FlashlightPageSele < 1){
+				FlashlightPageSele = 3;
+			}
+        }
+        else if(KeyNum == 2) {
+            FlashlightPageSele++;
+			if(FlashlightPageSele > 3){
+				FlashlightPageSele = 1;
+			}
+        }
+        else if(KeyNum == 3) {
+            OLED_Clear();
+            OLED_Update();
+            FlashlightPageSele_Temp = FlashlightPageSele;
+			
+			if(FlashlightPageSele_Temp == 1) {return 0;}
+			if(FlashlightPageSele_Temp == 2) {LED_ON();}
+			if(FlashlightPageSele_Temp == 3) {LED_OFF();}
+		}
+		switch(FlashlightPageSele) {
+			case 1:
+				Show_Flashlight_UI();
+				OLED_ReverseArea(0,0,16,16);
+				OLED_Update();
+				break;		
+			case 2:
+				Show_Flashlight_UI();
+				OLED_ReverseArea(20,28,24,24);
+				OLED_Update();
+				break;
+			case 3:
+				Show_Flashlight_UI();
+				OLED_ReverseArea(72,28,36,24);
+				OLED_Update();
+				break;
 		}
     }
 }
