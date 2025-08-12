@@ -1,8 +1,23 @@
+/*
+ * @Author: Jack 202205710405@smail.xtu.edu.cn
+ * @Date: 2025-07-24 18:02:23
+ * @LastEditors: Jack 202205710405@smail.xtu.edu.cn
+ * @LastEditTime: 2025-08-12 22:16:30
+ * @FilePath: \Project\Software\Menu.c
+ * @Description: 
+ * 
+ * Copyright (c) 2025 by ${git_name_email}, All Rights Reserved. 
+ */
 #include "stm32f10x.h"                  // Device header
+#include "Delay.h"
 #include "MyRTC.h"
 #include "OLED.h"
 #include "Key.h"
+#include "LED.h"
 #include "SetTime.h"
+#include "Menu.h"
+#include "MPU6050.h"
+#include <math.h>
 
 
 uint8_t KeyNum;	//it is different form Key_Num in Key.c
@@ -12,6 +27,8 @@ void MenuAPB_Init(void)
 {
 	MyRTC_Init();
 	Key_Init();
+	LED_Init();
+	MPU6050_Init();
 }
 
 /*-----------show the memu UI------------*/
@@ -171,8 +188,8 @@ static void Set_SlideMenuSelection(uint8_t MoveFlag, uint8_t preSelection,uint8_
 	if (MoveFlag == 1){
 		PreSelection = preSelection;
 		TargetSelection = targetSelection;
-		SlideMenu_ShowUI();
 	}
+	SlideMenu_ShowUI();
 }
 
 /*滑动菜单界面选择项*/
@@ -203,9 +220,9 @@ uint8_t SlideMenuPage(void) {
             SlideMenuPageSele_Temp = SlideMenuPageSele;
 
 			if(SlideMenuPageSele_Temp == 1)	return 0;	//return last level page
-			else if(SlideMenuPageSele_Temp == 2){}	//enter the time setup page	
-			else if(SlideMenuPageSele_Temp == 3){}	//enter the time setup page
-			else if(SlideMenuPageSele_Temp == 4){}	//enter the	 time setup page
+			else if(SlideMenuPageSele_Temp == 2){StopWatchPage();}	//enter the time setup page	
+			else if(SlideMenuPageSele_Temp == 3){FlashlightPage();}	//enter the time setup page
+			else if(SlideMenuPageSele_Temp == 4){IMUPage();}	//enter the	 time setup page
 			else if(SlideMenuPageSele_Temp == 5){}	
 			else if(SlideMenuPageSele_Temp == 6){}	
 			else if(SlideMenuPageSele_Temp == SlideMenuPageItemNum){}	
@@ -236,4 +253,209 @@ uint8_t SlideMenuPage(void) {
 			}
 		}	
     }
+}
+
+
+/*---------------------------------StopWatch Page---------------------------------------*/
+
+/*展示秒表界面*/
+int min,sec,tick;
+static void StopWatch_ShowUI(void){
+	OLED_ShowImage(0,0,16,16,Return);
+	OLED_Printf(32, 20, OLED_8X16, "%02d:%02d:%02d", min, sec, tick);
+	OLED_ShowString(8,44,"开始",OLED_8X16);
+	OLED_ShowString(48,44,"停止",OLED_8X16);
+	OLED_ShowString(88,44,"清除",OLED_8X16);
+}
+
+/*秒表计时函数*/
+uint8_t StopWatchRunning = 0; //0:停止，1:开始计时
+void StopWatch_Tick(void){
+	if (StopWatchRunning == 1){
+		tick++;
+		if(tick >= 100) {
+			tick = 0;
+			sec++;
+			if(sec >= 60) {
+				sec = 0;
+				min++;
+				if(min >= 60) {
+					min = 0;
+				}
+			}
+		}
+	}
+}
+
+#define		StopWatchPageItemNum						4
+uint8_t StopWatchPageSele = 1;
+uint8_t StopWatchPageSele_Temp;
+uint8_t StopWatchPage(void){
+	while(1) {
+		
+        KeyNum = Key_GetNum();
+        if(KeyNum == 1) {
+            StopWatchPageSele--;
+			if(StopWatchPageSele < 1){
+				StopWatchPageSele = StopWatchPageItemNum;
+			}
+        }
+        else if(KeyNum == 2) {
+            StopWatchPageSele++;
+			if(StopWatchPageSele > StopWatchPageItemNum){
+				StopWatchPageSele = 1;
+			}
+        }
+        else if(KeyNum == 3) {
+            OLED_Clear();
+            OLED_Update();
+            StopWatchPageSele_Temp = StopWatchPageSele;
+
+		if(StopWatchPageSele_Temp == 1)	return 0;	//return last level page
+			//dont have next level;
+        }
+
+		switch(StopWatchPageSele) {
+			case 1:
+				StopWatch_ShowUI();
+				OLED_ReverseArea(0,0,16,16);
+				OLED_Update();
+				break;
+			
+			case 2:
+				StopWatch_ShowUI();
+				StopWatchRunning = 1;
+				OLED_ReverseArea(8,44,32,16);
+				OLED_Update();
+				break;
+			case 3:
+				StopWatch_ShowUI();
+				StopWatchRunning = 0;
+				OLED_ReverseArea(48,44,32,16);
+				OLED_Update();
+				break;
+			case 4:
+				StopWatch_ShowUI();
+				StopWatchRunning = 0;
+				min = 0;
+				sec = 0;
+				tick = 0;
+				OLED_ReverseArea(88,44,32,16);
+				OLED_Update();
+				break;
+
+			//...
+			//case StopWatchPageItemNum:
+		}
+    }
+}
+
+/*----------------------------------Flashlight Page---------------------------------------*/
+
+void Show_Flashlight_UI(void){
+	OLED_ShowImage(0,0,16,16,Return);
+	OLED_ShowString(40, 0, "手电筒", OLED_8X16);
+	OLED_ShowString(20,28,"ON",OLED_12X24);
+	OLED_ShowString(72,28,"OFF",OLED_12X24);
+}
+
+uint8_t FlashlightPageSele = 1;
+uint8_t FlashlightPageSele_Temp;
+uint8_t FlashlightPage(void){
+	while(1) {
+        KeyNum = Key_GetNum();
+        if(KeyNum == 1) {
+            FlashlightPageSele--;
+			if(FlashlightPageSele < 1){
+				FlashlightPageSele = 3;
+			}
+        }
+        else if(KeyNum == 2) {
+            FlashlightPageSele++;
+			if(FlashlightPageSele > 3){
+				FlashlightPageSele = 1;
+			}
+        }
+        else if(KeyNum == 3) {
+            OLED_Clear();
+            OLED_Update();
+            FlashlightPageSele_Temp = FlashlightPageSele;
+			
+			if(FlashlightPageSele_Temp == 1) {return 0;}
+			if(FlashlightPageSele_Temp == 2) {LED_ON();}
+			if(FlashlightPageSele_Temp == 3) {LED_OFF();}
+		}
+		switch(FlashlightPageSele) {
+			case 1:
+				Show_Flashlight_UI();
+				OLED_ReverseArea(0,0,16,16);
+				OLED_Update();
+				break;		
+			case 2:
+				Show_Flashlight_UI();
+				OLED_ReverseArea(20,28,24,24);
+				OLED_Update();
+				break;
+			case 3:
+				Show_Flashlight_UI();
+				OLED_ReverseArea(72,28,36,24);
+				OLED_Update();
+				break;
+		}
+    }
+}
+
+
+/*----------------------------------IMU Page-----------------------------------*/
+#define		PI				3.14159265359L
+
+int16_t ax, ay, az;	//传感器测得的加速度
+int16_t gx, gy, gz;	//传感器测得的角速度
+float roll_g, pitch_g, yaw_g;	//陀螺仪解算的欧拉角
+float roll_a, pitch_a;	//加速度计解算的欧拉角
+float Roll, Pitch, Yaw;	//互补滤波后的欧拉角
+float a = 0.9f;	//互补滤波系数
+float Delta_t = 0.005f;	//采样时间间隔
+
+void MPU6050_Calculat(void){
+	Delay_ms(5);
+	MPU6050_GetData(&ax, &ay, &az, &gx, &gy, &gz);
+
+	// 1. 陀螺仪角度积分
+    roll_g  += ((float)gx / 16.4f) * Delta_t;   // 16.4f为±2000°/s灵敏度
+    pitch_g += ((float)gy / 16.4f) * Delta_t;
+    yaw_g   += ((float)gz / 16.4f) * Delta_t;
+
+    // 2. 加速度计解算欧拉角
+    roll_a  = atan2f((float)ay, (float)az) * 180.0f / PI;
+    pitch_a = atan2f(-(float)ax, sqrtf((float)ay * ay + (float)az * az)) * 180.0f / PI;
+
+    // 3. 互补滤波
+    Roll  = a * roll_g  + (1.0f - a) * roll_a;
+    Pitch = a * pitch_g + (1.0f - a) * pitch_a;
+    Yaw   = yaw_g; // Yaw角一般只用陀螺仪积分，除非有磁力计
+}
+
+void IMU_ShowUI(){
+	OLED_ShowImage(0, 0, 16, 16, Return);
+	OLED_Printf(0, 16, OLED_8X16, "Roll:   %.2f", Roll);
+	OLED_Printf(0, 32, OLED_8X16, "Pitch: %.2f", Pitch);
+	OLED_Printf(0, 48, OLED_8X16, "Yaw:   %.2f", Yaw);
+	OLED_Update();
+}
+
+uint8_t IMUPage(void){
+	while (1){
+		KeyNum = Key_GetNum();
+		if (KeyNum == 3){
+			OLED_Clear();
+			OLED_Update();
+			return 0;	//return last level page
+		}
+		OLED_Clear();
+		MPU6050_Calculat();
+		IMU_ShowUI();
+		OLED_ReverseArea(0, 0, 16, 16);
+		OLED_Update();
+	}
 }
