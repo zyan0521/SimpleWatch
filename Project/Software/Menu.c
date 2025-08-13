@@ -225,7 +225,7 @@ uint8_t SlideMenuPage(void) {
 			else if(SlideMenuPageSele_Temp == 3){FlashlightPage();}	//enter the flashlight page
 			else if(SlideMenuPageSele_Temp == 4){IMUPage();}	//enter the IMU page
 			else if(SlideMenuPageSele_Temp == 5){GamePage();}	//enter the Game page
-			else if(SlideMenuPageSele_Temp == 6){}	
+			else if(SlideMenuPageSele_Temp == 6){Emoji();}	
 			else if(SlideMenuPageSele_Temp == SlideMenuPageItemNum){}	
         }
 		
@@ -465,7 +465,7 @@ uint8_t IMUPage(void){
 
 #define		GamePageItemNum						2
 
-uint8_t gameTime_Flag = 0;	//0:停止，1:开始计时
+uint8_t gameTime_Flag = 0;	//游戏定时器中断标志位，0:停止，1:开始计时
 uint8_t GamePageSele = 1;
 uint8_t GamePageSele_Temp;
 
@@ -521,4 +521,55 @@ uint8_t GamePage(void) {
 			//case SettingPageItemNum:
 		}
     }
+}
+
+/*----------------------show the EmojiPageUI--------------------*/
+
+void Show_Emoji_UI(void)
+{
+	/*闭眼*/
+	for(uint8_t i=0;i<3;i++)
+	{
+		OLED_Clear();
+		OLED_ShowImage(30,10+i,16,16,Eyebrow[0]);//左眉毛
+		OLED_ShowImage(82,10+i,16,16,Eyebrow[1]);//右眉毛
+		OLED_DrawEllipse(40,32,6,6-i,1);//左眼
+		OLED_DrawEllipse(88,32,6,6-i,1);//右眼
+		OLED_ShowImage(54,40,20,20,Mouth);
+		OLED_Update();
+		Delay_ms(100);
+	}
+	
+	/*睁眼*/
+	for(uint8_t i=0;i<3;i++)
+	{
+		OLED_Clear();
+		OLED_ShowImage(30,12-i,16,16,Eyebrow[0]);//左眉毛
+		OLED_ShowImage(82,12-i,16,16,Eyebrow[1]);//右眉毛
+		OLED_DrawEllipse(40,32,6,4+i,1);//左眼
+		OLED_DrawEllipse(88,32,6,4+i,1);//右眼
+		OLED_ShowImage(54,40,20,20,Mouth);
+		OLED_Update();
+		Delay_ms(100);
+	}
+	
+	Delay_ms(500);
+	
+}
+
+uint8_t Emoji(void)
+{
+	while(1)
+	{
+		KeyNum=Key_GetNum();
+		if(KeyNum==3)
+		{
+			OLED_Clear();
+			OLED_Update();
+			return 0;
+		}
+		
+		Show_Emoji_UI();
+		
+	}
 }

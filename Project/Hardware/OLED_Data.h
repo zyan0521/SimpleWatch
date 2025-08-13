@@ -40,6 +40,8 @@ extern const uint8_t Ground[];
 extern const uint8_t Barrier[][48];
 extern const uint8_t Cloud[];
 extern const uint8_t Dino[][48];
+extern const uint8_t Eyebrow[][32];
+extern const uint8_t Mouth[];
 /*按照上面的格式，在这个位置加入新的图像数据声明*/
 //...
 
