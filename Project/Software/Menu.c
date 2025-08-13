@@ -2,7 +2,7 @@
  * @Author: Jack 202205710405@smail.xtu.edu.cn
  * @Date: 2025-07-24 18:02:23
  * @LastEditors: Jack 202205710405@smail.xtu.edu.cn
- * @LastEditTime: 2025-08-12 22:16:30
+ * @LastEditTime: 2025-08-12 23:01:49
  * @FilePath: \Project\Software\Menu.c
  * @Description: 
  * 
@@ -18,6 +18,7 @@
 #include "Menu.h"
 #include "MPU6050.h"
 #include <math.h>
+#include "Game.h"
 
 
 uint8_t KeyNum;	//it is different form Key_Num in Key.c
@@ -220,10 +221,10 @@ uint8_t SlideMenuPage(void) {
             SlideMenuPageSele_Temp = SlideMenuPageSele;
 
 			if(SlideMenuPageSele_Temp == 1)	return 0;	//return last level page
-			else if(SlideMenuPageSele_Temp == 2){StopWatchPage();}	//enter the time setup page	
-			else if(SlideMenuPageSele_Temp == 3){FlashlightPage();}	//enter the time setup page
-			else if(SlideMenuPageSele_Temp == 4){IMUPage();}	//enter the	 time setup page
-			else if(SlideMenuPageSele_Temp == 5){}	
+			else if(SlideMenuPageSele_Temp == 2){StopWatchPage();}	//enter the StopWatch page	
+			else if(SlideMenuPageSele_Temp == 3){FlashlightPage();}	//enter the flashlight page
+			else if(SlideMenuPageSele_Temp == 4){IMUPage();}	//enter the IMU page
+			else if(SlideMenuPageSele_Temp == 5){GamePage();}	//enter the Game page
 			else if(SlideMenuPageSele_Temp == 6){}	
 			else if(SlideMenuPageSele_Temp == SlideMenuPageItemNum){}	
         }
@@ -458,4 +459,66 @@ uint8_t IMUPage(void){
 		OLED_ReverseArea(0, 0, 16, 16);
 		OLED_Update();
 	}
+}
+
+/*----------------------------Game Page-----------------------------------*/
+
+#define		GamePageItemNum						2
+
+uint8_t gameTime_Flag = 0;	//0:停止，1:开始计时
+uint8_t GamePageSele = 1;
+uint8_t GamePageSele_Temp;
+
+void Game_ShowUI(void){
+	OLED_ShowString(48,0,"游戏",OLED_8X16);
+	OLED_ShowImage(0,0,16,16,Return);
+	OLED_ShowString(0,32,"小恐龙跑酷      ",OLED_8X16);
+	//OLED_Update();
+}
+
+uint8_t GamePage(void) {
+	while(1) {
+		
+        KeyNum = Key_GetNum();
+        if(KeyNum == 1) {
+            GamePageSele--;
+			if(GamePageSele < 1){
+				GamePageSele = GamePageItemNum;
+			}
+        }
+        else if(KeyNum == 2) {
+            GamePageSele++;
+			if(GamePageSele > GamePageItemNum){
+				GamePageSele = 1;
+			}
+        }
+        else if(KeyNum == 3) {
+            OLED_Clear();
+            OLED_Update();
+            GamePageSele_Temp = GamePageSele;
+
+			if(GamePageSele_Temp == 1)	{
+				return 0;	//return last level page
+			} else if(GamePageSele_Temp == 2){
+				gameTime_Flag = 1;	//开始计时
+				DinoGamePage();
+			}	//enter the time setup page	
+        }
+
+		switch(GamePageSele) {
+			case 1:
+				Game_ShowUI();
+				OLED_ReverseArea(0,0,16,16);
+				OLED_Update();
+				break;
+			
+			case 2:
+				Game_ShowUI();
+				OLED_ReverseArea(0,32,128,16);
+				OLED_Update();
+				break;
+			//...
+			//case SettingPageItemNum:
+		}
+    }
 }

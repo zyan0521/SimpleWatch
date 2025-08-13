@@ -775,6 +775,16 @@
               <FileType>5</FileType>
               <FilePath>.\Software\SetTime.h</FilePath>
             </File>
+            <File>
+              <FileName>Game.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Software\Game.c</FilePath>
+            </File>
+            <File>
+              <FileName>Game.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Software\Game.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

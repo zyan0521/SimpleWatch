@@ -10,4 +10,6 @@ void StopWatch_Tick(void);
 uint8_t FlashlightPage(void);
 uint8_t IMUPage(void);
 void MPU6050_Calculat(void);
+uint8_t GamePage(void) ;
+
 #endif

@@ -4,6 +4,7 @@
 #include "Menu.h"
 #include "Key.h"
 #include "Timer.h"
+#include "Game.h"
 
 //NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);	//write in Timer.c
 
@@ -20,7 +21,7 @@ int main(void)
 
 	while (1)
 	{
-//		Menu_ShowUI();
+		//Menu_ShowUI();
 		PageNum = Get_MenuPage();
 		if(PageNum == 1)
 		{
@@ -33,10 +34,12 @@ int main(void)
 	}
 }
 
+//定时器2中断服务程序，中断时间为10ms
 void TIM2_IRQHandler(void){
 	if (TIM_GetITStatus(TIM2,TIM_IT_Update) == SET){
 		Key_Tick();	
 		StopWatch_Tick();
+		GameTick();
 		TIM_ClearITPendingBit(TIM2,TIM_IT_Update);
 	}
 }

@@ -36,6 +36,10 @@ extern const uint8_t Diode[];
 extern const uint8_t Return[];
 extern const uint8_t Menu_Graph[][128];
 extern const uint8_t Frame[];
+extern const uint8_t Ground[];
+extern const uint8_t Barrier[][48];
+extern const uint8_t Cloud[];
+extern const uint8_t Dino[][48];
 /*按照上面的格式，在这个位置加入新的图像数据声明*/
 //...
 
